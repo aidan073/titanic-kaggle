@@ -1,12 +1,15 @@
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 from sklearn.preprocessing import MinMaxScaler
+
 
 # get dataframe from csv
 def get_df(data_path:str):
     return pd.read_csv(data_path)
 
 # seperate labels from training df
-def seperate_labels(train_df:pd.DataFrame, test_df:pd.DataFrame):
+def seperate_labels(train_df:pd.DataFrame, test_df:pd.DataFrame)->tuple[list, list]:
     labels = list(train_df["Survived"])
     train_df.drop("Survived", axis=1, inplace=True)
     train_df.drop("PassengerId", axis=1, inplace=True)
@@ -15,14 +18,24 @@ def seperate_labels(train_df:pd.DataFrame, test_df:pd.DataFrame):
     test_df.drop("PassengerId", axis=1, inplace=True)
     return labels, ids
 
-def get_prefix(ticket):
+# get ticket prefix
+def get_prefix(ticket)->str:
     lead = ticket.split(" ")[0][0]
     if lead.isalpha():
         return ticket.split(" ")[0]
     else:
         return "NoPrefix"
 
-def feature_engineering(df:pd.DataFrame):
+# create data visualization
+def visualize(df:pd.DataFrame, column:str, title:str, xlabel:str, ylabel:str, color:str="red")->None:
+    sns.histplot(df[column], kde=True, bins=30, color=color, label=column)
+    plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.show()
+
+# engineer features for better representation of data
+def feature_engineering(df:pd.DataFrame)->pd.DataFrame:
     # get lastnames and family size
     df = df.assign(Title=df["Name"].apply(lambda x: x.split(" ")[1].strip().lower())) # get Title i.e. Mr Mrs
     df["HasCabin"] = df["Cabin"].notnull().astype(int) # bool for if sample has a cabin
