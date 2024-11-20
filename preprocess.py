@@ -28,7 +28,7 @@ def get_prefix(ticket)->str:
 
 # create data visualization
 def visualize(df:pd.DataFrame, column:str, title:str, xlabel:str, ylabel:str, color:str="red")->None:
-    sns.histplot(df[column], kde=True, bins=30, color=color, label=column)
+    sns.histplot(df[column].dropna(), kde=True, bins=30, color=color, label=column)
     plt.title(title)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
